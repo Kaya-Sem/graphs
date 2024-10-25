@@ -1,36 +1,45 @@
 package graphs
 
-type Edge interface {
-	StartNode() Node
-	EndNode() Node
+type Edge[T any] interface {
+	StartNode() Node[T]
+	EndNode() Node[T]
 }
 
 /* Common node interface for the graph */
-type Node interface {
-	OutgoingEdges() []Edge
-	IncomingEdges() []Edge
-	CanocicalName() string
-	TwinName() string
+type Node[T any] interface {
+	OutgoingEdges() []Edge[T]
+	IncomingEdges() []Edge[T]
+	Value() T
 }
 
-type Graph interface {
-	size() int
+type Graph[T any] interface {
+	Size() int
+	Nodes() []Node[T]
+	/* TODO: add common graph metrics like girth, etc etc */
 }
 
-type SimpleGraph struct {
-	Size int
+type SimpleGraph[T any] struct {
+	size  int
+	nodes []Node[T]
 }
 
-func (g SimpleGraph) New() SimpleGraph {
-	graph := SimpleGraph{}
+func (s SimpleGraph[T]) Size() int {
+	return s.size
+}
+
+func NewSimpleGraph[T any]() *SimpleGraph[T] {
+	return &SimpleGraph[T]{size: 0}
+}
+
+func (g SimpleGraph[T]) New() SimpleGraph[T] {
+	graph := SimpleGraph[T]{}
 
 	return graph
 }
 
-type SimpleNode struct {
-	twinFilePath string
-	neighbors    []Node
-	edges        []Edge
+type SimpleNode[T any] struct {
+	neighbors []Node[T]
+	edges     []Edge[T]
 }
 
 type SimpleEdge struct {
