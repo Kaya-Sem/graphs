@@ -1,81 +1,58 @@
 package graphs
 
-type SimpleGraph[T any] struct {
-	size  int
-	nodes []Node[T]
+type Graph[T any] struct {
+	Size   int
+	Primus Node[T]
 }
 
-func (s SimpleGraph[T]) Nodes() []Node[T] {
-	return s.nodes
+func (s Graph[T]) Nodes() []Node[T] {
+	/* TODO: full traversal */
+	return nil
 }
 
-func (s SimpleGraph[T]) Size() int {
-	return s.size
+func NewGraph[T any]() *Graph[T] {
+	return &Graph[T]{Size: 0}
+	/* TODO: load primus from filesystem */
 }
 
-func NewSimpleGraph[T any]() *SimpleGraph[T] {
-	return &SimpleGraph[T]{size: 0}
+/* TODO: create function to initialize a graph from primus */
+
+type DirectedEdge[T any] struct {
+	from *Node[T]
+	to   *Node[T]
 }
 
-func (g SimpleGraph[T]) New() SimpleGraph[T] {
-	graph := SimpleGraph[T]{}
-
-	return graph
+type Node[T any] struct {
+	edges []DirectedEdge[T]
+	Value T
 }
 
-/*
-	Simple Nodes
-*/
+func (n Node[T]) Neighbors() []*Node[T] {
+	neighbors := []*Node[T]{}
+	for _, edge := range n.edges {
+		neighbors = append(neighbors, edge.to)
 
-type SimpleNode[T any] struct {
-	edges     []Edge[T]
-	neighbors []Node[T]
-	value     T
-}
-
-func (n SimpleNode[T]) Neighbors() []Node[T] {
-	return n.neighbors
-}
-
-func (n SimpleNode[T]) Value() T {
-	return n.value
-}
-
-func (n SimpleNode[T]) IncomingEdges() []Edge[T] {
-	edges := []Edge[T]{}
-	for _, e := range n.edges {
-		if e.From() == Node[T](n) {
-			edges = append(edges, e)
-		}
 	}
 
+	return neighbors
+}
+
+func (n *Node[T]) IncomingEdges() []DirectedEdge[T] {
+	edges := []DirectedEdge[T]{}
+	for _, edge := range n.edges {
+		if edge.to == n {
+			edges = append(edges, edge)
+		}
+	}
 	return edges
 }
 
-func (n SimpleNode[T]) OutgoingEdges() []Edge[T] {
-	edges := []Edge[T]{}
-	for _, e := range n.edges {
-		if e.From() == Node[T](n) {
-			edges = append(edges, e)
+func (n *Node[T]) OutgoingEdges() []DirectedEdge[T] {
+	edges := []DirectedEdge[T]{}
+	for _, edge := range n.edges {
+		if edge.from == n {
+			edges = append(edges, edge)
 		}
 	}
-
 	return edges
-}
-
-/*
-	Simple Edges
-*/
-
-type SimpleEdge[T any] struct {
-	from Node[T]
-	to   Node[T]
-}
-
-func (e SimpleEdge[T]) From() Node[T] {
-	return e.from
-}
-
-func (e SimpleEdge[T]) To() Node[T] {
-	return e.to
 }
